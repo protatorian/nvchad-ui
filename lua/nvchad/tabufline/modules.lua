@@ -54,7 +54,7 @@ local function available_space()
 end
 
 M.treeOffset = function()
-  return "%#NeoTreeNormal#" .. strep(" ", getNeoTreeWidth())
+  return "%#NvimTreeNormal#" .. strep(" ", getNeoTreeWidth())
 end
 
 M.buffers = function()
