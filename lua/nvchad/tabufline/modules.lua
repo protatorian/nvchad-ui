@@ -28,13 +28,30 @@ vim.cmd "function! TbToggleTabs(a,b,c,d) \n let g:TbTabsToggled = !g:TbTabsToggl
 
 -------------------------------------------------------- functions ------------------------------------------------------------
 
-local function getNeoTreeWidth()
+local fileTreeTitle = "File Tree"
+local function getTreeTitleStr(title, length)
+  local spaceNum = length - string.len(title)
+  if spaceNum < 0 then
+    return strep(" ", length)
+  end
+
+  if spaceNum % 2 == 0 then
+    return strep(" ", spaceNum / 2) .. title .. strep(" ", spaceNum / 2 - 1) .. "|"
+  end
+
+  return strep(" ", spaceNum / 2 + 1) .. title .. strep(" ", spaceNum / 2 - 1) .. "|"
+end
+
+local function getTreeTitle()
   for _, win in pairs(api.nvim_tabpage_list_wins(0)) do
     if vim.bo[api.nvim_win_get_buf(win)].ft == "neo-tree" then
-      return api.nvim_win_get_width(win) + 1
+      return getTreeTitleStr(
+        "File Tree",
+        api.nvim_win_get_width(win) + 1
+      )
     end
   end
-  return 0
+  return ""
 end
 
 ------------------------------------- modules -----------------------------------------
@@ -54,7 +71,7 @@ local function available_space()
 end
 
 M.treeOffset = function()
-  return "%#NvimTreeNormal#" .. strep(" ", getNeoTreeWidth())
+  return "%#NormalFloat#" .. getTreeTitle()
 end
 
 M.buffers = function()
