@@ -10,7 +10,7 @@
 ---@field base46? Base46Config
 
 ---@class Base46Config
----@field integrations? ExtendedModules[]
+---@field integrations? Base46Integrations[]
 
 --- UI related configuration
 --- e.g. colorschemes, statusline themes, cmp themes, dashboard, some LSP ui related
@@ -95,7 +95,7 @@
 ---         end,
 ---     }
 --- ```
----@field modules? table<string, fun(): string>
+---@field modules? table<string, string | fun(): string>
 --- Maximum length for the progress messages section
 ---@field lspprogress_len? integer
 
@@ -107,7 +107,7 @@
 --- If true, load tabufline when there is at least 2 buffers opened
 ---@field lazyload? boolean
 --- The order is a list of module names from default modules + your modules
----@field order? ('"available_space"'|'"treeOffset"'|'"buffers"'|'"tabs"'|'"btns"')[] | string[]
+---@field order? ('"treeOffset"'|'"buffers"'|'"tabs"'|'"btns"')[] | string[]
 --- Show numbers on tabufline buffer tabs
 ---@field show_numbers? boolean
 --- Your modules to be added to the tabufline
@@ -132,6 +132,7 @@
 ---@class NvCheatsheetConfig
 --- Cheatsheet theme
 ---@field theme? '"grid"'|'"simple"'
+---@field excluded_groups? string[]
 
 ---@class NvDashButtonConfig
 ---@field [1] string Description for the button

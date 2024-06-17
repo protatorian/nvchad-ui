@@ -1,7 +1,7 @@
 local new_cmd = vim.api.nvim_create_user_command
 local config = require("nvconfig").ui
 
-vim.opt.statusline = "%!v:lua.require('nvchad.stl." .. config.statusline.theme .. "')()"
+vim.o.statusline = "%!v:lua.require('nvchad.stl." .. config.statusline.theme .. "')()"
 
 if config.tabufline.enabled then
   require "nvchad.tabufline.lazyload"
@@ -32,7 +32,7 @@ end
 -- command to toggle cheatsheet
 new_cmd("NvCheatsheet", function()
   if vim.g.nvcheatsheet_displayed then
-    require("nvchad.tabufline").close_buffer()
+    vim.cmd "bw"
   else
     require("nvchad.cheatsheet." .. config.cheatsheet.theme)()
   end
@@ -46,17 +46,19 @@ vim.api.nvim_create_autocmd("VimResized", {
       vim.api.nvim_buf_set_lines(0, 0, -1, false, { "" })
       require("nvchad.nvdash").open()
     elseif vim.bo.filetype == "nvcheatsheet" then
-      vim.opt_local.modifiable = true
-      vim.api.nvim_buf_set_lines(0, 0, -1, false, { "" })
+      vim.cmd "bw"
       require("nvchad.cheatsheet." .. config.cheatsheet.theme)()
     end
   end,
 })
 
--- redraw statusline on LspProgressUpdate event & fixes #145
-vim.api.nvim_create_autocmd("User", {
-  pattern = "LspProgressUpdate",
-  callback = function()
-    vim.cmd "redrawstatus"
-  end,
-})
+if vim.version().minor >= 10 then
+  vim.api.nvim_create_autocmd("LspProgress", {
+    callback = function(args)
+      if string.find(args.match, "end") then
+        vim.cmd "redrawstatus"
+      end
+      vim.cmd "redrawstatus"
+    end,
+  })
+end
