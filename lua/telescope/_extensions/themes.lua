@@ -38,7 +38,7 @@ local function switcher()
     },
     sorter = conf.generic_sorter(),
 
-    attach_mappings = function(prompt_bufnr, map)
+    attach_mappings = function(prompt_bufnr)
       -- reload theme while typing
       vim.schedule(function()
         vim.api.nvim_create_autocmd("TextChangedI", {
@@ -63,10 +63,13 @@ local function switcher()
       ------------ save theme to chadrc on enter ----------------
       actions.select_default:replace(function()
         if action_state.get_selected_entry() then
-          local old_theme = dofile(vim.fn.stdpath "config" .. "/lua/chadrc.lua").ui.theme
-          local selected_theme = action_state.get_selected_entry()[1]
+          local chadrc = dofile(vim.fn.stdpath "config" .. "/lua/chadrc.lua")
+          local old_theme = chadrc.ui and chadrc.ui.theme or chadrc.base46.theme
+          old_theme = '"' .. old_theme .. '"'
 
-          require("nvchad.utils").replace_word(old_theme, selected_theme)
+          local theme = '"' .. action_state.get_selected_entry()[1] .. '"'
+
+          require("nvchad.utils").replace_word(old_theme, theme)
           actions.close(prompt_bufnr)
         end
       end)
